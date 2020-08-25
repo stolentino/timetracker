@@ -20,6 +20,12 @@ include 'inc/header.php';
                         <td>
                             <select name="project_id" id="project_id">
                                 <option value="">Select One</option>
+                                <?php
+                                    foreach (get_project_list() as $item){
+                                        echo "<option value='"  . $item['project_id'] . "'>"
+                                            . $item['title'] . "</option>";
+                                    }
+                                ?>
                             </select>
                         </td>
                     </tr>
