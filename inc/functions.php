@@ -33,19 +33,26 @@ function add_project($title, $category){
     return true;
 }
 
-function get_task_list(){
+function get_task_list($filter = null){
     include 'inc/connection.php';
 
     $sql = 'SELECT tasks.*, projects.title as project FROM tasks' 
     . ' JOIN projects ON tasks.project_id = projects.project_id';
 
+    $orderBy = ' ORDER BY date DESC';
+    if($filter){
+        $orderBy = ' ORDER BY projects.title ASC, date DESC';    
+    }
     try{
+        $results =  $db->prepare($sql . $orderBy);
+        $results->execute();
 
-        return $db->query($sql);
     } catch (Exception $e){
         echo "Error!: " . $e->getMessage() . "</br>";
         return array();
     }
+    return $results->fetchAll(PDO::FETCH_ASSOC);
+    
 }
 
 function add_task($project_id, $title, $date, $time){
