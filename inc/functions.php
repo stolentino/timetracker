@@ -39,12 +39,22 @@ function get_task_list($filter = null){
     $sql = 'SELECT tasks.*, projects.title as project FROM tasks' 
     . ' JOIN projects ON tasks.project_id = projects.project_id';
 
+    $where = '';
+    if(is_array($filter)){
+        if($filter[0] == 'project'){
+            $where = ' WHERE projects.project_id = ?';
+        }
+    }
+
     $orderBy = ' ORDER BY date DESC';
     if($filter){
         $orderBy = ' ORDER BY projects.title ASC, date DESC';    
     }
     try{
-        $results =  $db->prepare($sql . $orderBy);
+        $results =  $db->prepare($sql . $where . $orderBy);
+        if(is_array($filter)){
+            $results->bindValue(1, $filter[1], PDO::PARAM_INT);
+        }
         $results->execute();
 
     } catch (Exception $e){
@@ -52,7 +62,7 @@ function get_task_list($filter = null){
         return array();
     }
     return $results->fetchAll(PDO::FETCH_ASSOC);
-    
+
 }
 
 function add_task($project_id, $title, $date, $time){
