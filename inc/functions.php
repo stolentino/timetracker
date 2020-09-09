@@ -33,6 +33,23 @@ function add_project($title, $category){
     return true;
 }
 
+function get_project($project_id){
+    include 'inc/connection.php';
+
+    $sql = 'SELECT * FROM projects WHERE project_id = ?';
+
+    try{
+        $results = $db->prepare($sql);
+        $results->bindValue(1, $project_id, PDO::PARAM_INT);
+        $results->execute();
+    } catch (Exception $e){
+        echo "Error!: " . $e->getMessage() . "<br />";
+        return false;
+    }
+
+    return $results->fetch();
+}
+
 function get_task_list($filter = null){
     include 'inc/connection.php';
 
